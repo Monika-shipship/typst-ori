@@ -7,16 +7,22 @@
   author: "作者",
   subject: "Ori in Typst",
   semester: "2025 春",
-  date: datetime.today(),
+  // 笔记创建日期（选填）
+  date: datetime(year: 2025, month: 6, day: 24),
+  // 主题色
+  accent: blue,
+  bibliography-file:"refs.bib",
+  bibstyle: "gb-7714-2015-numeric",
   maketitle: true,
   makeoutline: true,
-  // theme: "dark",
+  theme: "dark",//此处有bug
   // media: "screen",
 )
 
 = 快速开始
 
 要开始使用此模板，你需要
+
 
 + 安装必须的字体包，包括：
   - #link("https://github.com/IBM/plex")[*IBM Plex Sans, Mono*]
@@ -48,7 +54,10 @@
 - `media`：媒体类型，可选值为 `"screen"` 和 `"print"`，前者边距较小，适合屏幕显示；后者边距较大，适合打印。默认值为 `"print"`；
 - `lang`：语言，默认为 `"zh"`；
 - `region`：地区，默认为 `"cn"`。
-
+  
+== 主题色示例
+你可以配置 `accent` 为主题色，可选参数有 `orange` `blue` `olive` `red` `eastern` `yellow` `navy` 
+此颜色会改变
 == 三线表
 
 基于 #link("https://github.com/OrangeX4/typst-tablem")[*Tablem 包*]，提供了简单好用的三线表功能，如@three-line-table。
@@ -186,15 +195,16 @@
 #theorem(title: "傅立叶级数的复数形式")[
   $f(x)$ 周期为 $2l$ ，且在每个周期内分段单调且有界（或者分段可导），则有 
   $ f(x) tilde.eq  sum_(n=-oo)^(+oo) F_n e^(i (n pi)/l x)  $
-  $ F_n= 1/(2l) integral_(-l)^l f(x) e^(-i (n pi)/l x) $
+  $ F_n= 1/(2l) integral_(-l)^l f(x) e^(-i (n pi)/l x) #text[数学公式中文字插入示例] $
   第一个式子不是等号，因为在间断点处级数收敛到间断点两断的平均值
 ]
 == 图像编号
+惠更斯原理的表述：设 $S$ 为波源，在 $t$ 时刻由振源发处的波振动传播到了面 $Sigma$ 上，#highlight()[我们认为 S 上的每一面元都可以看作次波的波源]，由各个面元发出的次波将在 $t^prime$ 时刻形成一个新的次波面，这些次波面的包络面 $Sigma^prime$ 就是 $t^prime$ 时刻的波面。@zhaooptics2021
 #grid(
   columns: (50%, 1fr),  // 第一列50%宽度，第二列自动填充剩余空间
   gutter: 1em,          // 列间距
     [     
-      #figure(image("figures/prob1.svg", width: 80%), caption: "惠更斯原理的示意图")
+      #figure(image("figures/prob1.svg", width: 80%), caption: "惠更斯原理的示意图         ")
     ],
     [
       #figure(
