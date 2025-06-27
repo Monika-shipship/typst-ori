@@ -1,4 +1,4 @@
-#import "@preview/ori:0.2.2": *
+#import "../lib.typ": *
 
 #set heading(numbering: numbly("{1:一}、", default: "1.1  "))
 
@@ -8,8 +8,8 @@
   subject: "Ori in Typst",
   semester: "2025 春",
   date: datetime.today(),
-  // maketitle: true,
-  // makeoutline: true,
+  maketitle: true,
+  makeoutline: true,
   // theme: "dark",
   // media: "screen",
 )
@@ -100,6 +100,7 @@
 
 #definition(title: "Typst 定义")[
   定义内容。
+  
 ] <definition>
 
 #theorem(title: "Typst 定理")[
@@ -179,3 +180,30 @@
   font: font,
 )
 ```
+== 数学公式编号
+
+为每个行间公式设置了公式编号，样式为 (a.b) ，其中a为章节号，b为该章公式序号
+#theorem(title: "傅立叶级数的复数形式")[
+  $f(x)$ 周期为 $2l$ ，且在每个周期内分段单调且有界（或者分段可导），则有 
+  $ f(x) tilde.eq  sum_(n=-oo)^(+oo) F_n e^(i (n pi)/l x)  $
+  $ F_n= 1/(2l) integral_(-l)^l f(x) e^(-i (n pi)/l x) $
+  第一个式子不是等号，因为在间断点处级数收敛到间断点两断的平均值
+]
+== 图像编号
+#grid(
+  columns: (50%, 1fr),  // 第一列50%宽度，第二列自动填充剩余空间
+  gutter: 1em,          // 列间距
+    [     
+      #figure(image("figures/prob1.svg", width: 80%), caption: "惠更斯原理的示意图")
+    ],
+    [
+      #figure(
+        image("figures/prob1-2.svg", width: 120%),
+        caption: "惠更斯原理的示意图",
+      )
+    ]
+  )
+
+      
+
+

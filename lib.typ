@@ -90,11 +90,16 @@
       first-line-indent
     },
   )
-
+  // 计数器
+  let chaptercounter = counter("chapter")
   /// 设置标题样式。
   show heading: it => {
     show h.where(amount: 0.3em): none
     it
+    if it.level == 1 and it.numbering != none {
+      chaptercounter.step()
+      counter(math.equation).update(0)
+    }
   }
   show heading: set block(spacing: 1.2em)
 
@@ -168,9 +173,23 @@
     pagebreak(weak: true)
   }
 
+  
+
+  
+
+  // 配置公式的编号和间距
+  set math.equation(numbering: (..nums) => (
+    context {
+      numbering("(1.1)", chaptercounter.at(here()).first(), ..nums)
+    }
+  ))
+
+  // 配置图像和图像编号
+  set figure(numbering: (..nums) => context {
+    numbering("1.1", chaptercounter.at(here()).first(), ..nums)
+  })
   /// 重置页面计数器。
   counter(page).update(1)
-
   /// 设置页面。
   set page(
     paper: "a4",
