@@ -1,5 +1,9 @@
 #import "@preview/numbly:0.1.0": numbly
 #import "@preview/tablem:0.2.0": tablem, three-line-table
+#import "@preview/showybox:2.0.4": showybox
+#import "@preview/ctheorems:1.1.3": *
+#import "@preview/codelst:2.0.2": codelst, sourcecode
+#import "@preview/physica:0.9.5": *
 #import "@preview/mitex:0.2.5": *
 #import "@preview/cmarker:0.1.5": render as cmarker-render
 #import "@preview/theorion:0.3.3": *
@@ -15,6 +19,17 @@
   math-cjk: "Noto Serif SC",
 )
 
+// 使用 ctheorems 包
+#show: thmrules
+
+// 主题自适应的代码框
+#let frame-dark = block.with(fill: rgb("#27292c"), inset: (x: 8pt, y: 4pt), radius: 4pt)
+#let frame-light = block.with(fill: rgb("#f0f0f0"), inset: (x: 8pt, y: 4pt), outset: (y: 4pt), radius: 4pt)
+
+
+
+
+
 // Definitions for math
 #let prox = math.op("prox")
 #let proj = math.op("proj")
@@ -28,12 +43,13 @@
 /// - size (length): 字体大小。默认为 `11pt`。
 /// - screen-size (length): 屏幕字体大小。默认为 `11pt`。
 /// - title (string): 文档的标题。
-/// - author (string): 作者。
-/// - subject (string): 课程名。
+/// - short-title (string) ：文档的短标题。
+/// - authors (string): 作者，实际上是一个字典。
+/// - subject (string): 课程名。（已删除）
 /// - semester (string): 学期。
 /// - date (datetime): 创建日期。
-/// - bibliography-file: 参考书目文件路径及引用样式。
-/// - accent: 主题色，将会设置一级标题，表格，`strong`的颜色
+/// - bibliography-file (string): 参考书目文件路径及引用样式。
+/// - accent : 主题色，将会设置一级标题，表格，`strong`的颜色
 /// - font (object): 字体。默认为 `default-font`。如果你想使用不同的字体，可以传入一个字典，包含 `main`、`mono`、`cjk`、`math` 和 `math-cjk` 字段。
 /// - lang (string): 语言。默认为 `zh`。
 /// - region (string): 地区。默认为 `cn`。
@@ -45,8 +61,11 @@
   size: 11pt,
   screen-size: 11pt,
   title: none,
-  author: none,
-  subject: none,
+  short-title: none,
+  description: none,
+  authors: (),
+  affiliations: (),
+  //subject已删除
   semester: none,
   date: none,
   bibliography-file: none,
@@ -60,6 +79,7 @@
   maketitle: false,
   makeoutline: false,
   outline-depth: 2,
+  cover-image: none,
   background-color: none,
   body,
 ) = {
@@ -73,6 +93,7 @@
   let text-color = if theme == "dark" { rgb("#ffffff") } else { rgb("#000000") }
   let raw-color = if theme == "dark" { rgb("#27292c") } else { rgb("#f0f0f0") }
   let font = default-font + font
+
 
   /// 设置字体。
   set text(
@@ -115,35 +136,47 @@
   show heading: set block(spacing: 1.2em)
 
   /// 设置代码块样式。
-  show raw.where(block: false): body => box(
-    fill: raw-color,
-    inset: (x: 3pt, y: 0pt),
-    outset: (x: 0pt, y: 3pt),
-    radius: 2pt,
-    {
-      set par(justify: false)
-      body
-    },
-  )
-  show raw.where(block: true): body => block(
-    width: 100%,
-    fill: raw-color,
-    outset: (x: 0pt, y: 4pt),
-    inset: (x: 8pt, y: 4pt),
-    radius: 4pt,
-    {
-      set par(justify: false)
-      body
-    },
-  )
+  // show raw.where(block: false): body => box(
+  //   fill: raw-color,
+  //   inset: (x: 3pt, y: 0pt),
+  //   outset: (x: 0pt, y: 3pt),
+  //   radius: 2pt,
+  //   {
+  //     set par(justify: false)
+  //     body
+  //   },
+  // )
+  // show raw.where(block: true): body => block(
+  //   width: 100%,
+  //   fill: raw-color,
+  //   outset: (x: 0pt, y: 4pt),
+  //   inset: (x: 8pt, y: 4pt),
+  //   radius: 4pt,
+  //   {
+  //     set par(justify: false)
+  //     body
+  //   },
+  // )
 
-  /// 设置链接样式。
+  // 配置行内代码块
+  // show raw.where(
+  //   block: false,
+  // ): it => box(fill: luma(245), inset: (x: 2pt), outset: (y: 3pt), radius: 1pt)[#it]
+
+  // show raw.where(block: true): it => sourcecode[#it]
+
+
+  /// 将链接设置蓝色并加下划线，并且对于作者列表禁用此设置
   show link: it => {
-    if type(it.dest) == str {
-      set text(fill: blue)
+    let author-names = ()
+    for author in authors {
+      author-names.push(author.name)
+    }
+
+    if it.body.has("text") and it.body.text in author-names {
       it
     } else {
-      it
+      underline(stroke: (dash: "densely-dotted"), text(fill: blue, it))
     }
   }
 
@@ -158,8 +191,8 @@
   /// 设置引用样式。
   set bibliography(style: "ieee")
 
-  /// 基础设置。
-  set document(title: title, author: if type(author) == str { author } else { () }, date: date)
+  /// 设置文档元数据
+  set document(title: title, author: authors.map(author => author.name), date: date)
 
   // 配置公式的编号和间距
   set math.equation(numbering: (..nums) => (
@@ -172,13 +205,15 @@
   set figure(numbering: (..nums) => context {
     numbering("1.1", chaptercounter.at(here()).first(), ..nums)
   })
-  // 配置表格
-  if theme != "dark" {
-    set table(
-      fill: (_, row) => if row == 0 { accent-color.lighten(60%) } else { accent-color.lighten(80%) },
-      stroke: 1pt + white,
-    )
-  }
+
+  // 配置表格（不能用if{}，因使用if{}后作用域仅局限在块里，无法影响body）
+  set table(
+    fill: (_, row) => if row == 0 { accent-color.lighten(60%) } else { accent-color.lighten(80%) },
+    stroke: 1pt + white,
+  ) if theme == "light"
+
+  set table.vline(stroke: 1pt + white) if theme == "dark"
+  set table.hline(stroke: 1pt + white) if theme == "dark"
 
 
   /// 重置页面计数器。
@@ -186,40 +221,144 @@
   /// 设置页面。
   set page(
     paper: paper-size,
-    header: {
+    header: context {
+      if here().page() == 1 {
+        return
+      }
+      // 获取正确的章节标题
+      let elems = query(heading.where(level: 1).after(here()))
+
+      let chapter-title = ""
+
+      if (elems == () or elems.first().location().page() != here().page()) {
+        let elems = query(heading.where(level: 1).before(here()))
+        if (elems != ()) { chapter-title = elems.last().body }
+      } else {
+        chapter-title = elems.first().body
+      }
+      // 修改页眉为 章节标题  short-title  semester
+      // 其中章节标题和 semester奇偶轮换，若无短标题(short-title)，就使用标题(title)
+      let head-title = text()[
+        #if short-title != none {
+          short-title
+        } else {
+          title
+        }
+      ]
+      let (lefthead, midhead, righthead) = if calc.even(here().page()) == true {
+        (chapter-title, head-title, semester)
+      } else { (semester, head-title, chapter-title) }
+
       set text(0.9em)
       stack(
         spacing: 0.2em,
         grid(
-          columns: (1fr, auto, 1fr),
-          align(left, semester), align(center, subject), align(right, title),
+          columns: (1fr, 1fr, 1fr),
+          gutter: 0pt,
+          align(left, lefthead), align(center, midhead), align(right, righthead),
         ),
         v(0.3em),
         line(length: 100%, stroke: 1pt + text-color),
         v(.15em),
         line(length: 100%, stroke: .5pt + text-color),
       )
+
       // reset footnote counter
       counter(footnote).update(0)
     },
+    footer: context {
+      if here().page() == 1 { return }
+      [
+        #if calc.even(here().page()) == true {
+          align(left)[#counter(page).display("1 / 1", both: true)]
+        } else {
+          align(right)[#counter(page).display("1 / 1", both: true)]
+        }
+      ]
+    },
     fill: bg-color,
-    numbering: "1 / 1",
+    // 封面图片和背景图片
+    background: context {
+      if here().page() == 1 and cover-image != none {
+        block(width: 100%, height: 100%)[#image(cover-image, width: 100%, height: 100%)]
+      } else if background-color != none {
+        block(width: 100%, height: 100%, fill: rgb(background-color))
+      }
+    },
+
+    // numbering: "1 / 1",
     margin: page-margin,
   )
 
   /// 标题页。
   if maketitle {
     // Title page
-    align(center + top)[
-      #v(20%)
-      #text(2em, weight: 500, subject)
-      #v(2em, weak: true)
-      #text(2em, weight: 500, title)
-      #v(2em, weak: true)
-      #author
+    box(width: 100%, height: 40%)[
+      #align(center + bottom)[
+        // #v(20%)
+        // #text(2em, weight: 500, subject)
+        // #v(2em, weak: true)
+        // #text(2em, weight: 500, title)
+        // #v(2em, weak: true)
+
+        #box(width: 100%, height: 40%)[
+          // 显示论文的标题和描述。
+          #align(center + bottom)[
+            #text(36pt, weight: "bold")[#title]
+            #parbreak()
+            #if description != none {
+              text(size: 16pt, style: "italic")[#description]
+            }
+          ]
+        ]
+
+
+        // #authors.name
+      ]
     ]
+    box(width: 100%, height: 40%)[
+      #align(center + top)[
+        #if authors.len() > 0 {
+          box(inset: (y: 10pt), {
+            authors
+              .map(author => {
+                text(16pt, weight: "semibold")[
+                  #if "homepage" in author {
+                    [#link(author.homepage)[#author.name]]
+                  } else { author.name }]
+                if "affiliations" in author {
+                  super(author.affiliations)
+                }
+                if "github" in author {
+                  link(author.github, box(height: 1.1em, baseline: 13.5%)[#image.decode(githubSvg)])
+                }
+              })
+              .join(", ", last: {
+                if authors.len() > 2 {
+                  ", and"
+                } else {
+                  " and"
+                }
+              })
+          })
+        }
+        #v(-2pt, weak: true)
+        #if affiliations.len() > 0 {
+          box(inset: (bottom: 10pt), {
+            affiliations
+              .map(affiliation => {
+                text(12pt)[
+                  #super(affiliation.id)#h(1pt)#affiliation.name
+                ]
+              })
+              .join(", ")
+          })
+        }
+      ]
+    ]
+    // v(9em)
     box(width: 100%)[
-      #align(center)[
+      #align(center + top)[
         #if date != none {
           text(size: 12pt, "最初写作于：")
           text(size: 12pt, fill: accent-color, weight: "semibold", date.display("[year]年[month]月[day]日"))
@@ -250,8 +389,26 @@
   }
 
 
-  /// 设置定理环境。
-  show: show-theorion
+  /// 行间代码块
+  show raw.where(block: true): code => sourcecode(
+    frame: f => if theme == "dark" { frame-dark(f) } else { frame-light(f) },
+    numbers-step: 1,
+    numbers-side: left,
+    gutter: 10pt,
+  )[#code]
+  // 行内代码块
+
+  show raw.where(block: false): code => sourcecode(
+    numbers-side: none, // 不要行号
+
+    frame: f => box(
+      fill: if theme == "dark" { rgb("#27292c") } else { rgb("#f0f0f0") },
+      inset: (x: 2pt, y: 0pt),
+      radius: 1pt,
+      [#f], // ← 把变量 f 插入内容，用 # 前缀
+    ),
+  )[#code]
+
 
   body
   // 显示参考文献
@@ -261,3 +418,5 @@
     bibliography(bibliography-file, title: "参考文献", style: bibstyle) // apply bibstyle here.
   }
 }
+
+
