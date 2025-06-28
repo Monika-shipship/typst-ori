@@ -391,23 +391,25 @@
 
   /// 行间代码块
   show raw.where(block: true): code => sourcecode(
-    frame: f => if theme == "dark" { frame-dark(f) } else { frame-light(f) },
+    frame: f => if theme == "dark" { frame-dark(f) } else { frame-lig1ht(f) },
     numbers-step: 1,
     numbers-side: left,
     gutter: 10pt,
   )[#code]
+  
+  
   // 行内代码块
 
-  show raw.where(block: false): code => sourcecode(
-    numbers-side: none, // 不要行号
+  // show raw.where(block: false): code => sourcecode(
+  //   numbers-side: none, // 不要行号
 
-    frame: f => box(
-      fill: if theme == "dark" { rgb("#27292c") } else { rgb("#f0f0f0") },
-      inset: (x: 2pt, y: 0pt),
-      radius: 1pt,
-      [#f], // ← 把变量 f 插入内容，用 # 前缀
-    ),
-  )[#code]
+  //   frame: f => box(
+  //     fill: if theme == "dark" { rgb("#27292c") } else { rgb("#f0f0f0") },
+  //     inset: (x: 2pt, y: 0pt),
+  //     radius: 1pt,
+  //     [#f], // ← 把变量 f 插入内容，用 # 前缀
+  //   ),
+  // )[#code]
 
 
   body
