@@ -1,13 +1,23 @@
 #import "@preview/numbly:0.1.0": numbly
-#import "@preview/tablem:0.2.0": tablem, three-line-table
+#import "@preview/unify:0.7.1": * // 单位
+#import "@preview/pinit:0.2.2": * // 相对脚注
+#import "@preview/cetz:0.4.0": * // 绘图
+#import "@preview/fletcher:0.5.8": * // 优雅的箭头
+#import "@preview/tablem:0.2.0": tablem, three-line-table // markdown-like tables
+#import "@preview/cheq:0.2.2": * // markdown-like checklist
+#import "@preview/zero:0.3.3": * // 科学数字表示法
 #import "@preview/showybox:2.0.4": showybox
 #import "@preview/ctheorems:1.1.3": *
-#import "@preview/codelst:2.0.2": codelst, sourcecode
-#import "@preview/physica:0.9.5": *
-#import "@preview/mitex:0.2.5": *
+#import "@preview/zebraw:0.5.5": * // 代码块
+#import "@preview/physica:0.9.5": * // 物理专用数学公式
+#import "@preview/mitex:0.2.5": * // 输出tex代码
 #import "@preview/cmarker:0.1.5": render as cmarker-render
 #import "@preview/theorion:0.3.3": *
+// theorion公式相关设置
 #import cosmos.fancy: *
+// #import cosmos.rainbow: *
+// #import cosmos.clouds: *
+
 #let md = cmarker-render.with(math: mitex)
 
 #let default-font = (
@@ -19,15 +29,18 @@
   math-cjk: "Noto Serif SC",
 )
 
-// 使用 ctheorems 包
-#show: thmrules
+
 
 // 主题自适应的代码框
 #let frame-dark = block.with(fill: rgb("#27292c"), inset: (x: 8pt, y: 4pt), radius: 4pt)
 #let frame-light = block.with(fill: rgb("#f0f0f0"), inset: (x: 8pt, y: 4pt), outset: (y: 4pt), radius: 4pt)
 
-
-
+// 脚注强调
+#let crimson = rgb("#c00000")
+#let redbold(body) = {
+  set text(fill: crimson, weight: "bold")
+  body
+}
 
 
 // Definitions for math
@@ -83,6 +96,30 @@
   background-color: none,
   body,
 ) = {
+  // theorion公式相关设置
+  import cosmos.fancy: *
+  // import cosmos.rainbow: *
+  // import cosmos.clouds: *
+  show: show-theorion
+
+  show: thmrules
+  // 使用 zebraw 调整代码块
+  show: zebraw
+  show: zebraw-init.with(
+    background-color: if theme == "dark" {
+      // 深色：四色斑马
+      (rgb("#2b2d30"), rgb("#2f3134"), rgb("#2b2d30"), rgb("#333639"))
+    } else {
+      // 亮色：单一浅灰
+      rgb("#f5f5f5")
+    },
+    lang-color: if theme == "dark" { rgb("#2b2d30") } else { teal },
+    indentation: 2, // 每 2 个空格一根缩进线
+    numbering: true, //是否有行号
+    highlight-color: if theme == "dark" { rgb("#44475a") } else { rgb("#eaf2ff") }, // 高亮颜色
+  )
+  // show: zebraw.with(..zebraw-themes.zebra-reverse)
+  // show: zebraw.with(..zebraw-themes.zebra)
   let accent-color = rgb(accent)
 
   assert(media == "screen" or media == "print", message: "media must be 'screen' or 'print'")
@@ -136,16 +173,16 @@
   show heading: set block(spacing: 1.2em)
 
   /// 设置代码块样式。
-  // show raw.where(block: false): body => box(
-  //   fill: raw-color,
-  //   inset: (x: 3pt, y: 0pt),
-  //   outset: (x: 0pt, y: 3pt),
-  //   radius: 2pt,
-  //   {
-  //     set par(justify: false)
-  //     body
-  //   },
-  // )
+  show raw.where(block: false): body => box(
+    fill: raw-color,
+    inset: (x: 3pt, y: 0pt),
+    outset: (x: 0pt, y: 3pt),
+    radius: 2pt,
+    {
+      set par(justify: false)
+      body
+    },
+  )
   // show raw.where(block: true): body => block(
   //   width: 100%,
   //   fill: raw-color,
@@ -180,6 +217,14 @@
     }
   }
 
+
+  show image.where(format: auto): it => {
+    if theme == "dark" {
+      box(fill: rgb("#707580"), inset: 2pt, radius: 2pt)[#it]
+    } else { it }
+  }
+
+
   /// 设置 figure 样式。
   show figure.where(kind: table): set figure.caption(position: top)
 
@@ -205,6 +250,7 @@
   set figure(numbering: (..nums) => context {
     numbering("1.1", chaptercounter.at(here()).first(), ..nums)
   })
+
 
   // 配置表格（不能用if{}，因使用if{}后作用域仅局限在块里，无法影响body）
   set table(
@@ -389,15 +435,15 @@
   }
 
 
-  /// 行间代码块
-  show raw.where(block: true): code => sourcecode(
-    frame: f => if theme == "dark" { frame-dark(f) } else { frame-lig1ht(f) },
-    numbers-step: 1,
-    numbers-side: left,
-    gutter: 10pt,
-  )[#code]
-  
-  
+  // /// 行间代码块
+  // show raw.where(block: true): code => sourcecode(
+  //   frame: f => if theme == "dark" { frame-dark(f) } else { frame-lig1ht(f) },
+  //   numbers-step: 1,
+  //   numbers-side: left,
+  //   gutter: 10pt,
+  // )[#code]
+
+
   // 行内代码块
 
   // show raw.where(block: false): code => sourcecode(

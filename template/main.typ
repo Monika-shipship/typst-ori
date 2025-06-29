@@ -48,7 +48,7 @@
   // 正文背景颜色（选填 HEX 颜色或 none）
   // background-color: "#FAF9DE",
 
-  // theme: "dark", //此处有bug
+  theme: "dark", //此处有bug
   // media: "screen",
 )
 
@@ -63,14 +63,46 @@
 
 + 导入模板，并在文档开头设置参数，包括标题、作者、课程或主题、学期、时间；
   ```typ
-  #import "@preview/ori:0.2.2": *
+    #import "@preview/ori:0.2.2": *
 
-  #show: ori.with(
-    title: "文档标题",
-    author: "张三",
-    subject: "Ori in Typst",
+    #show: ori.with(
+    title: [Ori in Typst\ 文档标题],
+    short-title: [Ori in Typst],
+    // 笔记描述（选填）
+    description: [
+      文档描述示例\ 逸一时误一世，忆久忆久罢已龄
+    ],
+    // 笔记创建日期（选填）
+    date: datetime(year: 2025, month: 6, day: 24),
+    authors: (
+      (
+        name: "作者一",
+        //github: "https://github.com/a-kkiri",
+        //homepage: "https://github.com/a-kkiri",
+        affiliations: "1,2",
+      ),
+    ),
+    affiliations: (
+      (id: "1", name: "114 University"),
+      (id: "2", name: "514 Inc."),
+    ),
+    // 学期
     semester: "2025 春",
-    date: datetime.today(),
+    // 参考书目文件路径及引用样式
+    bibliography-file: "refs.bib",
+    bibstyle: "gb-7714-2015-numeric",
+    // 是否生成标题和目录
+    maketitle: true,
+    makeoutline: true,
+    // 主题色
+    accent: blue,
+    // 封面背景图片（选填图片路径或 none）
+    // cover-image: "./figures/cover-image.png",
+    // 正文背景颜色（选填 HEX 颜色或 none）
+    // background-color: "#FAF9DE",
+
+    theme: "dark", //此处有bug
+    // media: "screen",
   )
   ```
 
@@ -94,6 +126,8 @@
 == 三线表
 
 基于 #link("https://github.com/OrangeX4/typst-tablem")[*Tablem 包*]，提供了简单好用的三线表功能，如@three-line-table。
+
+
 
 ```typ
 #figure(
@@ -265,15 +299,16 @@
   gutter: 1em,
   // 列间距
   [
-    #figure(image("figures/prob1.svg", width: 80%), caption: "惠更斯原理的示意图         ")
+    #figure(image("figures/prob1.svg", width: 80%, format:auto), caption: "惠更斯原理的示意图         " )
   ],
   [
     #figure(
-      image("figures/prob1-2.svg", width: 120%),
+      image("figures/prob1-2.svg", width: 100%, format:auto),
       caption: "惠更斯原理的示意图",
     )
   ],
 )
+#important-box[你需要在`image` 中传入`format:auto`才能使得`dark`模式下自动添加底色]
 
 
 
