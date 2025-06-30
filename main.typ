@@ -3,35 +3,29 @@
 #set heading(numbering: numbly("{1:一}、", default: "1.1  "))
 
 #show: ori.with(
-  title: [Ori in Typst\ 文档标题],
-  short-title: [Ori in Typst],
+  title: [高等数学(下)\ 速效救心丸],
+  short-title: [高数下速效救心丸],
   // 笔记描述（选填）
   description: [
-    文档描述示例\ 逸一时误一世，忆久忆久罢已龄
+    本文档由“REKPARC-SPST-LZU-UHT” #link("https://github.com/Monika-shipship/REKPARC-SPST-LZU-UHT", box(height: 1.1em, baseline: 13.5%)[#image.decode(githubSvg)]) 项目组编写，如你也有相关笔记或资料，欢迎参与贡献!（点击上方github图标可跳转链接） 或者可以邮件传递你的资料:"lzuanonymous\@qq.com"
   ],
   // 笔记创建日期（选填）
   date: datetime(year: 2025, month: 6, day: 24),
   authors: (
     (
-      name: "作者一",
+      name: "Monika",
       //github: "https://github.com/a-kkiri",
       //homepage: "https://github.com/a-kkiri",
       affiliations: "1,2",
     ),
-    (
-      name: "作者二",
-      //github: "https://github.com/a-kkiri",
-      //homepage: "https://github.com/a-kkiri",
-      affiliations: "3,4",
-    ),
+    
   ),
 
   // 所属组织列表，每一项包括一个 id 和 name。这些将显示在作者下方。
   affiliations: (
-    (id: "1", name: "114 University"),
-    (id: "2", name: "514 Inc."),
-    (id: "1", name: "1919 University"),
-    (id: "2", name: "810 Inc."),
+    (id: "1", name: "zako University"),
+    // (id: "2", name: "514 Inc."),
+    
   ),
   // 学期
   semester: "2025 春",
@@ -53,4 +47,4 @@
 )
 
 #include "content/charpter1.typ"
-#include "content/charpter2.typ"
+// #include "content/charpter2.typ"
