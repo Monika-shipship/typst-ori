@@ -84,8 +84,6 @@
   and cannot be written as the product of two smaller natural numbers.
 ] <def:prime>
 
-#definition[123]
-
 #example[
   The numbers $2$, $3$, and $17$ are prime. As proven in @cor:infinite-prime,
   this list is far from complete! See @thm:euclid for the full proof.

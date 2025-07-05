@@ -378,7 +378,7 @@
   /// 标题页。
   if maketitle {
     // Title page
-    box(width: 100%, height: 40%)[
+    box(width: 100%, height:40%)[
       #align(center + bottom)[
         // #v(20%)
         // #text(2em, weight: 500, subject)
@@ -389,7 +389,7 @@
         #box(width: 100%, height: 40%)[
           // 显示论文的标题和描述。
           #align(center + bottom)[
-            #text(36pt, weight: "bold")[#title]
+            #text(48pt, weight: "bold")[#title]
             #parbreak()
             #if description != none {
               text(size: 16pt, style: "italic")[#description]
