@@ -13,6 +13,7 @@
 #import "@preview/mitex:0.2.5": * // 输出tex代码
 #import "@preview/cmarker:0.1.5": render as cmarker-render
 #import "@preview/theorion:0.3.3": *
+#import "resource.typ": *
 // theorion公式相关设置
 #import cosmos.fancy: *
 // #import cosmos.rainbow: *
@@ -48,6 +49,44 @@
 #let proj = math.op("proj")
 #let argmax = math.op("argmax", limits: true)
 #let argmin = math.op("argmin", limits: true)
+
+
+// 配置块引用
+// #let blockquote(cite: none, body) = [
+//   #set text(size: 10.5pt)
+//   #pad(left: 0.5em)[
+//     #block(
+//     breakable: true,
+//     width: 100%,
+//     fill: gray.lighten(95%),
+//     radius: (left: 4pt, right: 4pt),
+//     stroke: (left: 4pt + eastern.darken(20%), rest: 1pt + silver),
+//     inset: 1em
+//     )[#body]
+//   ]
+// ]
+#let blockquote(
+  cite: none,
+  body,
+  theme: "dark",        // ← 新增；默认亮色
+  fill: auto,            // sentinel；作者可手动覆盖
+) = [
+  #let default-fill = if theme == "dark" { gray.darken(70%) } else { gray.lighten(95%) }
+
+  #set text(size: 10.5pt)
+  #pad(left: 0.5em)[
+    #block(
+      breakable: true,
+      width: 100%,
+      fill: if fill == auto { default-fill } else { fill },
+      radius: (left: 4pt, right: 4pt),
+      stroke: (left: 4pt + eastern.darken(20%), rest: 1pt + silver),
+      inset: 1em
+    )[ #body ]
+  ]
+]
+
+
 
 
 /// 模板的核心类，规范了文档的格式。
@@ -96,12 +135,12 @@
   background-color: none,
   body,
 ) = {
+  let blockquote = blockquote.with(theme: theme)
   // theorion公式相关设置
   import cosmos.fancy: *
   // import cosmos.rainbow: *
   // import cosmos.clouds: *
   show: show-theorion
-
   show: thmrules
   // 使用 zebraw 调整代码块
   show: zebraw

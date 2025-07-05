@@ -122,7 +122,9 @@
 #quote-box[
   引用内容。
 ]
-
+#blockquote[
+  引用内容。
+]
 #remark[
   注解内容。
 ]
